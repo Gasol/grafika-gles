@@ -26,7 +26,7 @@ android {
     }
 
     publishing {
-        singleVariant('debug') {
+        singleVariant('release') {
             withSourcesJar()
         }
     }
@@ -40,15 +40,15 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
 }
 
-afterEvaluate {
-    publishing {
-        publications {
-            release(MavenPublication) {
-                from components.debug
+publishing {
+    publications {
+        release(MavenPublication) {
+            groupId = 'tw.gasol.android'
+            artifactId = 'grafika-gles'
+            version = '1.0.0'
 
-                groupId = 'tw.gasol.android'
-                artifactId = 'grafika-gles'
-                version = '1.0.0'
+            afterEvaluate {
+                from components.release
             }
         }
     }

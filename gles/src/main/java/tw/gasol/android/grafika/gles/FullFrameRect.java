@@ -67,6 +67,7 @@ public class FullFrameRect {
     public float[] getModelViewMatrix() {
         if (!mMatrixReady) {
             if (mAngle != 0.0f) {
+                mMvpMatrix = GlUtil.IDENTITY_MATRIX;
                 Matrix.rotateM(mMvpMatrix, 0, mAngle, 0.0f, 0.0f, 1.0f);
             }
             mMatrixReady = true;

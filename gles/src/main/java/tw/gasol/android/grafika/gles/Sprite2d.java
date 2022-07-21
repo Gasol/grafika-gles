@@ -103,6 +103,9 @@ public class Sprite2d {
         while (angle <= -360.0f) {
             angle += 360.0f;
         }
+        if (mAngle == angle) {
+            return;
+        }
         mAngle = angle;
         mMatrixReady = false;
     }

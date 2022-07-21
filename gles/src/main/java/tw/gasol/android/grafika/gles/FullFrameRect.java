@@ -16,6 +16,8 @@
 
 package tw.gasol.android.grafika.gles;
 
+import android.opengl.Matrix;
+
 /**
  * This class essentially represents a viewport-sized sprite that will be rendered with
  * a texture, usually from an external source like the camera or video decoder.
@@ -23,6 +25,11 @@ package tw.gasol.android.grafika.gles;
 public class FullFrameRect {
     private final Drawable2d mRectDrawable = new Drawable2d(Drawable2d.Prefab.FULL_RECTANGLE);
     private Texture2dProgram mProgram;
+    private float mAngle;
+
+    // Use the identity matrix for MVP so our 2x2 FULL_RECTANGLE covers the viewport.
+    private float[] mMvpMatrix = GlUtil.IDENTITY_MATRIX;
+    private boolean mMatrixReady = true;
 
     /**
      * Prepares the object.
@@ -32,6 +39,36 @@ public class FullFrameRect {
      */
     public FullFrameRect(Texture2dProgram program) {
         mProgram = program;
+    }
+
+    /**
+     * Sets the full frame rotation angle, in degrees. Rect will rotate counter-clockwise.
+     */
+    public void setRotation(float angle) {
+        // Normalize.  We're not expecting it to be way off, so just iterate.
+        while (angle >= 360.0f) {
+            angle -= 360.0f;
+        }
+        while (angle <= -360.0f) {
+            angle += 360.0f;
+        }
+        mAngle = angle;
+        mMatrixReady = false;
+    }
+
+    /**
+     * Returns the model-view matrix.
+     * <p>
+     * To avoid allocations, this returns internal state.  The caller must not modify it.
+     */
+    public float[] getModelViewMatrix() {
+        if (!mMatrixReady) {
+            if (mAngle != 0.0f) {
+                Matrix.rotateM(mMvpMatrix, 0, mAngle, 0.0f, 0.0f, 1.0f);
+            }
+            mMatrixReady = true;
+        }
+        return mMvpMatrix;
     }
 
     /**
@@ -79,8 +116,7 @@ public class FullFrameRect {
      * Draws a viewport-filling rect, texturing it with the specified texture object.
      */
     public void drawFrame(int textureId, float[] texMatrix) {
-        // Use the identity matrix for MVP so our 2x2 FULL_RECTANGLE covers the viewport.
-        mProgram.draw(GlUtil.IDENTITY_MATRIX, mRectDrawable.getVertexArray(), 0,
+        mProgram.draw(getModelViewMatrix(), mRectDrawable.getVertexArray(), 0,
                 mRectDrawable.getVertexCount(), mRectDrawable.getCoordsPerVertex(),
                 mRectDrawable.getVertexStride(),
                 texMatrix, mRectDrawable.getTexCoordArray(), textureId,

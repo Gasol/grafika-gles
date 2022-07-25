@@ -28,7 +28,7 @@ public class FullFrameRect {
     private float mAngle;
 
     // Use the identity matrix for MVP so our 2x2 FULL_RECTANGLE covers the viewport.
-    private float[] mMvpMatrix = GlUtil.IDENTITY_MATRIX;
+    private float[] mMvpMatrix = GlUtil.IDENTITY_MATRIX.clone();
     private boolean mMatrixReady = true;
 
     /**
@@ -67,7 +67,7 @@ public class FullFrameRect {
     public float[] getModelViewMatrix() {
         if (!mMatrixReady) {
             if (mAngle != 0.0f) {
-                mMvpMatrix = GlUtil.IDENTITY_MATRIX;
+                Matrix.setIdentityM(mMvpMatrix, 0);
                 Matrix.rotateM(mMvpMatrix, 0, mAngle, 0.0f, 0.0f, 1.0f);
             }
             mMatrixReady = true;

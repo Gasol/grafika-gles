@@ -33,6 +33,7 @@ public class Texture2dProgram {
     }
 
     // Simple vertex shader, used for all programs.
+    // @formatter:off
     private static final String VERTEX_SHADER =
             "uniform mat4 uMVPMatrix;\n" +
             "uniform mat4 uTexMatrix;\n" +
@@ -112,6 +113,7 @@ public class Texture2dProgram {
             "    }\n" +
             "    gl_FragColor = sum;\n" +
             "}\n";
+    // @formatter:on
 
     private ProgramType mProgramType;
 
@@ -187,7 +189,7 @@ public class Texture2dProgram {
             GlUtil.checkLocation(muColorAdjustLoc, "uColorAdjust");
 
             // initialize default values
-            setKernel(new float[] {0f, 0f, 0f,  0f, 1f, 0f,  0f, 0f, 0f}, 0f);
+            setKernel(new float[]{0f, 0f, 0f, 0f, 1f, 0f, 0f, 0f, 0f}, 0f);
             setTexSize(256, 256);
         }
     }
@@ -261,10 +263,10 @@ public class Texture2dProgram {
         float rh = 1.0f / height;
 
         // Don't need to create a new array here, but it's syntactically convenient.
-        mTexOffset = new float[] {
-            -rw, -rh,   0f, -rh,    rw, -rh,
-            -rw, 0f,    0f, 0f,     rw, 0f,
-            -rw, rh,    0f, rh,     rw, rh
+        mTexOffset = new float[]{
+                -rw, -rh, 0f, -rh, rw, -rh,
+                -rw, 0f, 0f, 0f, rw, 0f,
+                -rw, rh, 0f, rh, rw, rh
         };
         //Log.d(TAG, "filt size: " + width + "x" + height + ": " + Arrays.toString(mTexOffset));
     }
@@ -272,21 +274,30 @@ public class Texture2dProgram {
     /**
      * Issues the draw call.  Does the full setup on every call.
      *
-     * @param mvpMatrix The 4x4 projection matrix.
-     * @param vertexBuffer Buffer with vertex position data.
-     * @param firstVertex Index of first vertex to use in vertexBuffer.
-     * @param vertexCount Number of vertices in vertexBuffer.
+     * @param mvpMatrix       The 4x4 projection matrix.
+     * @param vertexBuffer    Buffer with vertex position data.
+     * @param firstVertex     Index of first vertex to use in vertexBuffer.
+     * @param vertexCount     Number of vertices in vertexBuffer.
      * @param coordsPerVertex The number of coordinates per vertex (e.g. x,y is 2).
-     * @param vertexStride Width, in bytes, of the position data for each vertex (often
-     *        vertexCount * sizeof(float)).
-     * @param texMatrix A 4x4 transformation matrix for texture coords.  (Primarily intended
-     *        for use with SurfaceTexture.)
-     * @param texBuffer Buffer with vertex texture data.
-     * @param texStride Width, in bytes, of the texture data for each vertex.
+     * @param vertexStride    Width, in bytes, of the position data for each vertex (often
+     *                        vertexCount * sizeof(float)).
+     * @param texMatrix       A 4x4 transformation matrix for texture coords.  (Primarily intended
+     *                        for use with SurfaceTexture.)
+     * @param texBuffer       Buffer with vertex texture data.
+     * @param texStride       Width, in bytes, of the texture data for each vertex.
      */
-    public void draw(float[] mvpMatrix, FloatBuffer vertexBuffer, int firstVertex,
-            int vertexCount, int coordsPerVertex, int vertexStride,
-            float[] texMatrix, FloatBuffer texBuffer, int textureId, int texStride) {
+    public void draw(
+            float[] mvpMatrix,
+            FloatBuffer vertexBuffer,
+            int firstVertex,
+            int vertexCount,
+            int coordsPerVertex,
+            int vertexStride,
+            float[] texMatrix,
+            FloatBuffer texBuffer,
+            int textureId,
+            int texStride
+    ) {
         GlUtil.checkGlError("draw start");
 
         // Select the program.
@@ -311,7 +322,7 @@ public class Texture2dProgram {
 
         // Connect vertexBuffer to "aPosition".
         GLES20.glVertexAttribPointer(maPositionLoc, coordsPerVertex,
-            GLES20.GL_FLOAT, false, vertexStride, vertexBuffer);
+                GLES20.GL_FLOAT, false, vertexStride, vertexBuffer);
         GlUtil.checkGlError("glVertexAttribPointer");
 
         // Enable the "aTextureCoord" vertex attribute.
@@ -321,7 +332,7 @@ public class Texture2dProgram {
         // Connect texBuffer to "aTextureCoord".
         GLES20.glVertexAttribPointer(maTextureCoordLoc, 2,
                 GLES20.GL_FLOAT, false, texStride, texBuffer);
-            GlUtil.checkGlError("glVertexAttribPointer");
+        GlUtil.checkGlError("glVertexAttribPointer");
 
         // Populate the convolution kernel, if present.
         if (muKernelLoc >= 0) {

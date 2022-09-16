@@ -53,6 +53,7 @@ public class EglSurfaceBase {
     /**
      * Creates a window surface.
      * <p>
+     *
      * @param surface May be a Surface or SurfaceTexture.
      */
     public void createWindowSurface(Surface surface) {

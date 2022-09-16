@@ -17,10 +17,12 @@
 package tw.gasol.android.grafika.gles;
 
 import android.graphics.Bitmap;
+import android.graphics.SurfaceTexture;
 import android.opengl.EGL14;
 import android.opengl.EGLSurface;
 import android.opengl.GLES20;
 import android.util.Log;
+import android.view.Surface;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -53,10 +55,8 @@ public class EglSurfaceBase {
      * <p>
      * @param surface May be a Surface or SurfaceTexture.
      */
-    public void createWindowSurface(Object surface) {
-        if (mEGLSurface != EGL14.EGL_NO_SURFACE) {
-            throw new IllegalStateException("surface already created");
-        }
+    public void createWindowSurface(Surface surface) {
+        checkNoSurface();
         mEGLSurface = mEglCore.createWindowSurface(surface);
 
         // Don't cache width/height here, because the size of the underlying surface can change
@@ -65,16 +65,25 @@ public class EglSurfaceBase {
         //mHeight = mEglCore.querySurface(mEGLSurface, EGL14.EGL_HEIGHT);
     }
 
+    public void createWindowSurface(SurfaceTexture surfaceTexture) {
+        checkNoSurface();
+        mEGLSurface = mEglCore.createWindowSurface(surfaceTexture);
+    }
+
     /**
      * Creates an off-screen surface.
      */
     public void createOffscreenSurface(int width, int height) {
-        if (mEGLSurface != EGL14.EGL_NO_SURFACE) {
-            throw new IllegalStateException("surface already created");
-        }
+        checkNoSurface();
         mEGLSurface = mEglCore.createOffscreenSurface(width, height);
         mWidth = width;
         mHeight = height;
+    }
+
+    private void checkNoSurface() {
+        if (mEGLSurface != EGL14.EGL_NO_SURFACE) {
+            throw new IllegalStateException("surface already created");
+        }
     }
 
     /**

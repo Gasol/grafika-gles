@@ -226,7 +226,18 @@ public final class EglCore {
      * <p>
      * If this is destined for MediaCodec, the EGLConfig should have the "recordable" attribute.
      */
-    public EGLSurface createWindowSurface(Object surface) {
+    public EGLSurface createWindowSurface(Surface surface) {
+        return createWindowSurfaceInternal(surface);
+    }
+
+    /**
+     * @see EglCore#createWindowSurface(Surface)
+     */
+    public EGLSurface createWindowSurface(SurfaceTexture surfaceTexture) {
+        return createWindowSurfaceInternal(surfaceTexture);
+    }
+
+    private EGLSurface createWindowSurfaceInternal(Object surface) {
         if (!(surface instanceof Surface) && !(surface instanceof SurfaceTexture)) {
             throw new RuntimeException("invalid surface: " + surface);
         }
